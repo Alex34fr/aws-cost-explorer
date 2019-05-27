@@ -4,7 +4,7 @@ assuming you're not using a consolidated account (just one account without any o
   
 you will need python3, and awscli installed and configured!    
   
-1. `$ git clone PATH-TO-THIS-REPO aws-cost-report`  
+1. `$ git clone https://rednap@bitbucket.org/rednap/aws-cost-report.git aws-cost-report`  
   
 2. `$ cd aws-cost-report`   
   
