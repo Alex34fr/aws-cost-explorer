@@ -1,6 +1,7 @@
 #!/bin/bash
 #@lex2020
 
+green=$(tput setaf 2)
 blue=$(tput setaf 4)
 normal=$(tput sgr0)
 CYAN='\033[96m'
@@ -43,36 +44,35 @@ read -p '-->  Enter the MONTH for which you want the billing( 01, 02...) ' month
 
 if [[ "$month" = "01" ]] ; then
   MON_STR=January
-elif [[ "$MON_STR" = "Feb" ]] ; then
-  MON_NUM=02
-elif [[ "$MON_STR" = "Mar" ]] ; then
-  MON_NUM=03
-elif [[ "$MON_STR" = "Apr" ]] ; then
-  MON_NUM=04
-elif [[ "$MON_STR" = "May" ]] ; then
-  MON_NUM=05
-elif [[ "$MON_STR" = "Jun" ]] ; then
-  MON_NUM=06
-elif [[ "$MON_STR" = "Jul" ]] ; then
-  MON_NUM=07
-elif [[ "$MON_STR" = "Aug" ]] ; then
-  MON_NUM=08
-elif [[ "$MON_STR" = "Sep" ]] ; then
-  MON_NUM=09
-elif [[ "$MON_STR" = "Oct" ]] ; then
-  MON_NUM=10
-elif [[ "$MON_STR" = "Nov" ]] ; then
-  MON_NUM=11
-elif [[ "$MON_STR" = "Dec" ]] ; then
-  MON_NUM=12
+elif [[ "$month" = "02" ]] ; then
+  MON_STR=February
+elif [[ "$month" = "03" ]] ; then
+  MON_STR=March
+elif [[ "$month" = "04" ]] ; then
+  MON_STR=April
+elif [[ "$month" = "05" ]] ; then
+  MON_STR=May
+elif [[ "$month" = "06" ]] ; then
+  MON_STR=June
+elif [[ "$month" = "07" ]] ; then
+  MON_STR=July
+elif [[ "$month" = "08" ]] ; then
+  MON_STR=August
+elif [[ "$month" = "09" ]] ; then
+  MON_STR=September
+elif [[ "$month" = "10" ]] ; then
+  MON_STR=October
+elif [[ "$month" = "11" ]] ; then
+  MON_STR=November
+elif [[ "$month" = "12" ]] ; then
+  MON_STR=December
 fi
-
 
 PERIOD='Start=2020-'$month'-01,End=2020-'0$(($month + 1))'-01'
 
 billing=$(aws --profile $select_prof ce get-cost-and-usage --time-period $PERIOD --granularity MONTHLY --metrics "BlendedCost" --output text |awk 'FNR == 3 {print $2}')
 
-printf "Billing of $select_prof for $MON_STR 2020 =%s\n " "${blue}$(printf "%8.2f\n" "$billing")$ ${normal}"
+printf "Billing of ${green}$select_prof ${normal}for ${green}$MON_STR 2020${normal} =%s\n " "${blue}$(printf "%8.2f\n" "$billing")$ ${normal}"
 
 else
 		echo "Profile not found"
