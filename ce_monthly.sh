@@ -72,7 +72,8 @@ PERIOD='Start=2020-'$month'-01,End=2020-'0$(($month + 1))'-01'
 
 billing=$(aws --profile $select_prof ce get-cost-and-usage --time-period $PERIOD --granularity MONTHLY --metrics "BlendedCost" --output text |awk 'FNR == 3 {print $2}')
 
-printf "Billing of ${green}$select_prof ${normal}for ${green}$MON_STR 2020${normal} =%s\n " "${blue}$(printf "%8.2f\n" "$billing")$ ${normal}"
+printf "\nBilling of ${green}$select_prof ${normal}for ${green}$MON_STR 2020${normal} =%s\n\n " "${blue}$(printf "%8.2f" "$billing")$ ${normal}"
+
 
 else
 		echo "Profile not found"
