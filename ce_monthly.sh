@@ -1,6 +1,5 @@
 #!/bin/bash
 #@lex2020
-#V.3.0
 
 RED='\033[0;31m'
 CYAN='\033[96m'
@@ -12,25 +11,13 @@ WARNING='\033[93m'
 FAIL='\033[91m'
 NC='\033[0m'
 
-
-#printf "I ${RED}LOVE ${NC}BASH\n"
-
-#list_prof=$(aws configure list-profiles --output json)
-
-list=$(aws configure list-profiles)
-echo $list > list.txt
-
 echo -e "${MAGENTA}Choose the AWS profile you want to check :${NC}\n"
 
-#aws configure list-profiles
-#read -p '-->  Enter profile you want to check: ' select_prof
-
-echo "AWS Profiles List : "
+echo "Your AWS Profiles List configured in your machine : "
 echo ""
 aws configure list-profiles
 echo "For All: type all"
 echo ""
-
 
 read -p '--> YOUR CHOICE : ' select_prof
 
