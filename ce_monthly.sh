@@ -47,50 +47,56 @@ exit 0
 
 fi
 
-#  read -p "Enter a number between 2 and 5: " number
-read -p '-->  Enter the MONTH for which you want the billing(1,2,3...): ' month
+read -p '-->  Enter the MONTH for which you want the billing (1,2,3...): ' month
   
-#format 'month' into 2 decimal number
-monthd=$(printf %02d $month)
-#nxtmonth=$(($monthd + 1))
-  
- if (($monthd >= 01 && $monthd <= 12)); then
+##format 'month' into 2 decimal number
 
 
-if [[ "$monthd" = "01" ]] ; then
+#monthd=$(printf %02d $month)
+
+
+##nxtmonth=$(($monthd + 1))
+  
+echo $monthd
+
+
+  #if (($monthd >= 1 && $monthd <= 12)); then
+
+
+if [[ "$month" = "01" ]] ; then
   MON_STR=January
-elif [[ "$monthd" = "02" ]] ; then
+elif [[ "$month" = "02" ]] ; then
   MON_STR=February
-elif [[ "$monthd" = "03" ]] ; then
+elif [[ "$month" = "03" ]] ; then
   MON_STR=March
-elif [[ "$monthd" = "04" ]] ; then
+elif [[ "$month" = "04" ]] ; then
   MON_STR=April
-elif [[ "$monthd" = "05" ]] ; then
+elif [[ "$month" = "05" ]] ; then
   MON_STR=May
-elif [[ "$monthd" = "06" ]] ; then
+elif [[ "$month" = "06" ]] ; then
   MON_STR=June
-elif [[ "$monthd" = "07" ]] ; then
+elif [[ "$month" = "07" ]] ; then
   MON_STR=July
-elif [[ "$monthd" = "08" ]] ; then
+elif [[ "$month" = "08" ]] ; then
   MON_STR=August
-elif [[ "$monthd" = "09" ]] ; then
+elif [[ "$month" = "09" ]] ; then
   MON_STR=September
-elif [[ "$monthd" = "10" ]] ; then
+elif [[ "$month" = "10" ]] ; then
   MON_STR=October
-elif [[ "$monthd" = "11" ]] ; then
+elif [[ "$month" = "11" ]] ; then
   MON_STR=November
-elif [[ "$monthd" = "12" ]] ; then
+elif [[ "$month" = "12" ]] ; then
   MON_STR=December
 fi
 
-else
-echo -e "${WARNING}Enter a valid month${NC}\n"
-exit 0
+#else
+#echo -e "${WARNING}Enter a valid month${NC}\n"
+#exit 0
 
-fi
+#fi
 
 #2020
-PERIOD='Start=2020-'$monthd-01',End=2020-'$(printf %02d $(($monthd + 1)))'-01'
+PERIOD='Start=2020-0'$month'-01,End=2020-'0$(($month + 1))'-01'
 #2019
 #PERIOD='Start=2019-'$monthd-01',End=2019-'$(printf %02d $(($monthd + 1)))'-01'
 
