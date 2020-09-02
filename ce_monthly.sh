@@ -11,7 +11,7 @@ OKBLUE='\033[94m'
 OKGREEN='\033[92m'
 WARNING='\033[93m'
 NC='\033[0m'
-
+out_path=/Users/reynaud/GIT-PROJECTS/aws-cost-report/billing.txt
 
 
 echo ""
@@ -19,7 +19,7 @@ echo -e "${MAGENTA} 1. Type the AWS profile you want to check :${NC}\n"
 
 echo -e "${OKGREEN} Your AWS profiles configured in your machine are: ${NC}\n"
 aws configure list-profiles
-echo "For All: type all"
+#echo "For All: type all"
 echo ""
 
 read -p '--> YOUR CHOICE : ' select_prof
@@ -63,23 +63,23 @@ echo $monthd
   #if (($monthd >= 1 && $monthd <= 12)); then
 
 
-if [[ "$month" = "01" ]] ; then
+if [[ "$month" = "1" ]] ; then
   MON_STR=January
-elif [[ "$month" = "02" ]] ; then
+elif [[ "$month" = "2" ]] ; then
   MON_STR=February
-elif [[ "$month" = "03" ]] ; then
+elif [[ "$month" = "3" ]] ; then
   MON_STR=March
-elif [[ "$month" = "04" ]] ; then
+elif [[ "$month" = "4" ]] ; then
   MON_STR=April
-elif [[ "$month" = "05" ]] ; then
+elif [[ "$month" = "5" ]] ; then
   MON_STR=May
-elif [[ "$month" = "06" ]] ; then
+elif [[ "$month" = "6" ]] ; then
   MON_STR=June
-elif [[ "$month" = "07" ]] ; then
+elif [[ "$month" = "7" ]] ; then
   MON_STR=July
-elif [[ "$month" = "08" ]] ; then
+elif [[ "$month" = "8" ]] ; then
   MON_STR=August
-elif [[ "$month" = "09" ]] ; then
+elif [[ "$month" = "9" ]] ; then
   MON_STR=September
 elif [[ "$month" = "10" ]] ; then
   MON_STR=October
@@ -106,5 +106,7 @@ billing=$(aws --profile $select_prof ce get-cost-and-usage --time-period $PERIOD
 
 printf "\nBilling of ${green}$select_prof ${normal}for ${green}$MON_STR 2020${normal} =%s\n\n " "${blue}$(printf "%8.2f" "$billing")$ ${normal}"  
 
+echo "$select_prof |$MON_STR 2020|$(printf "%8.2f" "$billing")$ " >> $out_path
 
+exit 0
 
