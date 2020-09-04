@@ -37,11 +37,11 @@ read -p '==> YOUR CHOICE : ' select_prof
 
 #check if selected profil exists or selection is "all" :
 
- if [[ "$select_prof" -ge 1 && "$select_prof" -le "$nbline" ]] || [ "$select_prof" = "all" ] ; then
+ if [[ "$select_prof" -ge 1 && "$select_prof" -le "$nbline" ]] || [[ "$select_prof" = "all" || "$select_prof" = "ALL" ]] ; then
 
 # choose the month:
 echo " "
-echo -e "${MAGENTA} 2. Choose the month you want to check for $select_prof :${NC}\n"
+echo -e "${MAGENTA} 2. Choose the month for which you want to check the billing for $select_prof :${NC}\n"
 
 echo " "
 echo "============== 2020 =============="
@@ -91,7 +91,7 @@ exit 0
 fi
 
 # all profiles case
-if [[ "$select_prof" = "all" ]] ; then
+if [[ "$select_prof" = "all" || "$select_prof" = "ALL" ]] ; then
 echo " 
 ===============================================================
         Billing for all AWS accounts on $MON_STR 2020
@@ -104,9 +104,9 @@ profile=$(head -$n $prof_list | tail -1)
 PERIOD='Start=2020-0'$month'-01,End=2020-'0$(($month + 1))'-01'
 billing=$(aws --profile $profile ce get-cost-and-usage --time-period $PERIOD --granularity MONTHLY --metrics "BlendedCost" --output text |awk 'FNR == 3 {print $2}')
 
-echo "$n. $profile for $MON_STR 2020 = $(printf "%8.2f" "$billing") $" >> $path_output/AWS_billing_all_${MON_STR}_2020.txt
+echo "$n. $profile for $MON_STR 2020 = $(printf "$%.2f\n" "$billing")" >> $path_output/AWS_billing_all_${MON_STR}_2020.txt
 
-printf "\n$n. ${green}$profile ${normal}for ${green}$MON_STR 2020${normal} =%s\n " "${blue}$(printf "%8.2f" "$billing")$ ${normal}"
+printf "\n$n. ${green}$profile ${normal}for ${green}$MON_STR 2020${normal} = %s\n " "${blue}$(printf "$%.2f" "$billing") ${normal}"
 n=$((n+1)) 
 done < $prof_list
 
@@ -120,7 +120,7 @@ PERIOD='Start=2020-0'$month'-01,End=2020-'0$(($month + 1))'-01'
 #PERIOD='Start=2019-0'$month'-01,End=2019-'0$(($month + 1))'-01'
 
 billing=$(aws --profile $profile ce get-cost-and-usage --time-period $PERIOD --granularity MONTHLY --metrics "BlendedCost" --output text |awk 'FNR == 3 {print $2}')
-printf "\nBilling of ${blue}$profile ${normal}for ${green}$MON_STR 2020${normal} =%s\n\n " "${blue}$(printf "%8.2f" "$billing")$ ${normal}"
+printf "\nBilling of ${blue}$profile ${normal}for ${green}$MON_STR 2020${normal} = %s\n\n " "${blue}$(printf "$%.2f\n" "$billing") ${normal}"
 
 fi
 exit 0
