@@ -33,18 +33,25 @@ done < $prof_list
 echo "ALL.To select all profiles: type 'all'"
 echo ""
 
-read -p '==> YOUR CHOICE : ' select_prof
+read -p '==> Enter the number of your choice : ' select_prof
 
 #check if selected profil exists or selection is "all" :
 
  if [[ "$select_prof" -ge 1 && "$select_prof" -le "$nbline" ]] || [[ "$select_prof" = "all" || "$select_prof" = "ALL" ]] ; then
 
-# choose the month:
-echo " "
-echo -e "${MAGENTA} 2. Choose the month for which you want to check the billing for $select_prof :${NC}\n"
+
+# choose the year:
 
 echo " "
-echo "============== 2020 =============="
+echo -e "${MAGENTA} 2. Enter the year for which you want to check the billing for $select_prof :${NC}\n"
+read -p '==>   Enter the YEAR for which you want the billing (2019,2020...): ' year
+
+# choose the month:
+echo " "
+echo -e "${MAGENTA} 3. Choose the month for which you want to check the billing for $select_prof :${NC}\n"
+
+echo " "
+echo "============== $year =============="
 echo " "
 echo " 1 : January         7 : July"   
 echo " 2 : February        8 : August" 
@@ -56,31 +63,44 @@ echo " "
 
 read -p '==>   Enter the MONTH for which you want the billing (1,2,3...11,12): ' month
 
+monthd=$(printf %02d $month)
 
-if [[ "$month" = "1" ]] ; then
+
+
+
+if [[ "$monthd" = "01" ]] ; then
   MON_STR=January
-elif [[ "$month" = "2" ]] ; then
+elif [[ "$monthd" = "02" ]] ; then
   MON_STR=February
-elif [[ "$month" = "3" ]] ; then
+elif [[ "$monthd" = "03" ]] ; then
   MON_STR=March
-elif [[ "$month" = "4" ]] ; then
+elif [[ "$monthd" = "04" ]] ; then
   MON_STR=April
-elif [[ "$month" = "5" ]] ; then
+elif [[ "$monthd" = "05" ]] ; then
   MON_STR=May
-elif [[ "$month" = "6" ]] ; then
+elif [[ "$monthd" = "06" ]] ; then
   MON_STR=June
-elif [[ "$month" = "7" ]] ; then
+elif [[ "$monthd" = "07" ]] ; then
   MON_STR=July
-elif [[ "$month" = "8" ]] ; then
+elif [[ "$monthd" = "08" ]] ; then
   MON_STR=August
-elif [[ "$month" = "9" ]] ; then
+elif [[ "$monthd" = "09" ]] ; then
   MON_STR=September
-elif [[ "$month" = "10" ]] ; then
+elif [[ "$monthd" = "10" ]] ; then
   MON_STR=October
-elif [[ "$month" = "11" ]] ; then
+elif [[ "$monthd" = "11" ]] ; then
   MON_STR=November
-elif [[ "$month" = "12" ]] ; then
+elif [[ "$monthd" = "12" ]] ; then
   MON_STR=December
+fi
+
+
+if [[ "$monthd" = "12" ]] ; then
+nxtmonth=01
+endyear=$(( $year + 1 ))
+else
+nxtmonth=$(printf %02d $(( $month + 1 )))
+endyear=$year
 fi
 
 else
@@ -91,36 +111,34 @@ exit 0
 fi
 
 # all profiles case
+
 if [[ "$select_prof" = "all" || "$select_prof" = "ALL" ]] ; then
 echo " 
 ===============================================================
-        Billing for all AWS accounts on $MON_STR 2020
+        Billing for all AWS accounts on $MON_STR $year
 ==============================================================="
-> $path_output/AWS_billing_all_${MON_STR}_2020.txt
+> $path_output/AWS_billing_all_${MON_STR}_${year}.txt
 n=1
 while read line; do
 # reading each line of profiles_list
 profile=$(head -$n $prof_list | tail -1)
-PERIOD='Start=2020-0'$month'-01,End=2020-'0$(($month + 1))'-01'
+PERIOD='Start='$year'-'$monthd'-01,End='$endyear'-'$nxtmonth'-01'
 billing=$(aws --profile $profile ce get-cost-and-usage --time-period $PERIOD --granularity MONTHLY --metrics "BlendedCost" --output text |awk 'FNR == 3 {print $2}')
 
-echo "$n. $profile for $MON_STR 2020 = $(printf "$%.2f\n" "$billing")" >> $path_output/AWS_billing_all_${MON_STR}_2020.txt
+echo "$n. $profile for $MON_STR $year = $(printf "$%.2f\n" "$billing")" >> $path_output/AWS_billing_all_${MON_STR}_${year}.txt
 
-printf "\n$n. ${green}$profile ${normal}for ${green}$MON_STR 2020${normal} = %s\n " "${blue}$(printf "$%.2f" "$billing") ${normal}"
+printf "\n$n. ${green}$profile ${normal}for ${green}$MON_STR $year${normal} = %s\n " "${blue}$(printf "$%.2f" "$billing") ${normal}"
 n=$((n+1)) 
 done < $prof_list
 
 else
 
 #single profile case
-profile=$(head -"$select_prof" $prof_list | tail -1)
-#2020
-PERIOD='Start=2020-0'$month'-01,End=2020-'0$(($month + 1))'-01'
-#2019
-#PERIOD='Start=2019-0'$month'-01,End=2019-'0$(($month + 1))'-01'
 
+profile=$(head -"$select_prof" $prof_list | tail -1)
+PERIOD='Start='$year'-'$monthd'-01,End='$endyear'-'$nxtmonth'-01'
 billing=$(aws --profile $profile ce get-cost-and-usage --time-period $PERIOD --granularity MONTHLY --metrics "BlendedCost" --output text |awk 'FNR == 3 {print $2}')
-printf "\nBilling of ${blue}$profile ${normal}for ${green}$MON_STR 2020${normal} = %s\n\n " "${blue}$(printf "$%.2f\n" "$billing") ${normal}"
+printf "\nBilling of ${blue}$profile ${normal}for ${green}$MON_STR $year${normal} = %s\n\n " "${blue}$(printf "$%.2f\n" "$billing") ${normal}"
 
 fi
 exit 0
