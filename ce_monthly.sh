@@ -1,7 +1,6 @@
 #!/bin/bash
 #@lex2020
 
-
 #Variables
 red=$(tput setaf 1)
 green=$(tput setaf 2)
@@ -39,7 +38,6 @@ read -p '==> Enter the number of your choice : ' select_prof
 
  if [[ "$select_prof" -ge 1 && "$select_prof" -le "$nbline" ]] || [[ "$select_prof" = "all" || "$select_prof" = "ALL" ]] ; then
 
-
 # choose the year:
 
 echo " "
@@ -63,10 +61,12 @@ echo " "
 
 read -p '==>   Enter the MONTH for which you want the billing (1,2,3...11,12): ' month
 
+
+#check if selected profil exists or selection is "all" :
+
+ if [[ "$month" -ge 1 && "$month" -le 12 ]] ; then
+
 monthd=$(printf %02d $month)
-
-
-
 
 if [[ "$monthd" = "01" ]] ; then
   MON_STR=January
@@ -94,21 +94,28 @@ elif [[ "$monthd" = "12" ]] ; then
   MON_STR=December
 fi
 
+else
+printf "${red} Wrong month selection, please try again...${NC}\n"
+exit 0
+
+fi 
+
+else
+
+printf "${red} Wrong profile selection, please try again...${NC}\n"
+exit 0
+
+fi
 
 if [[ "$monthd" = "12" ]] ; then
 nxtmonth=01
 endyear=$(( $year + 1 ))
 else
 nxtmonth=$(printf %02d $(( $month + 1 )))
+monthd=$(printf %02d $month)
 endyear=$year
 fi
 
-else
-
-printf "${red} Wrong selection, please try again...${NC}\n"
-exit 0
-
-fi
 
 # all profiles case
 
@@ -135,7 +142,9 @@ else
 
 #single profile case
 
+
 profile=$(head -"$select_prof" $prof_list | tail -1)
+
 PERIOD='Start='$year'-'$monthd'-01,End='$endyear'-'$nxtmonth'-01'
 billing=$(aws --profile $profile ce get-cost-and-usage --time-period $PERIOD --granularity MONTHLY --metrics "BlendedCost" --output text |awk 'FNR == 3 {print $2}')
 printf "\nBilling of ${blue}$profile ${normal}for ${green}$MON_STR $year${normal} = %s\n\n " "${blue}$(printf "$%.2f\n" "$billing") ${normal}"
