@@ -15,7 +15,7 @@ path_output=/Users/$(printenv USER)/Downloads
 #choose the profil:
 
 echo ""
-echo -e "${MAGENTA} 1. Type the AWS profile you want to check :${NC}\n"
+echo -e "${MAGENTA} 1. Choose the AWS profile you want to check :${NC}\n"
 echo -e "${OKGREEN} AWS profiles configured in your machine are: ${NC}\n"
 
 #display your profiles list:
@@ -32,7 +32,7 @@ done < $prof_list
 echo "ALL.To select all profiles: type 'all'"
 echo ""
 
-read -p '==> Enter the number of your choice : ' select_prof
+read -p '==> Enter the profile number of your choice (1,2,...,ALL): ' select_prof
 
 #check if selected profil exists or selection is "all" :
 
@@ -41,12 +41,12 @@ read -p '==> Enter the number of your choice : ' select_prof
 # choose the year:
 
 echo " "
-echo -e "${MAGENTA} 2. Enter the year for which you want to check the billing for $select_prof :${NC}\n"
+echo -e "${MAGENTA} 2. Choose the YEAR for which you want to check the billing :${NC}\n"
 read -p '==>   Enter the YEAR for which you want the billing (2019,2020...): ' year
 
 # choose the month:
 echo " "
-echo -e "${MAGENTA} 3. Choose the month for which you want to check the billing for $select_prof :${NC}\n"
+echo -e "${MAGENTA} 3. Choose the MONTH for which you want to check the billing :${NC}\n"
 
 echo " "
 echo "============== $year =============="
