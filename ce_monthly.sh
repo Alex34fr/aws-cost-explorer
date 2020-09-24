@@ -3,7 +3,7 @@
 
 #Variables
 red=$(tput setaf 1)
-green=$(tput setaf 2)
+green=$(  tput setaf 2)
 blue=$(tput setaf 4)
 normal=$(tput sgr0)
 MAGENTA='\033[95m'
@@ -12,29 +12,30 @@ ERROR='\033[9m'
 NC='\033[0m'
 path_output=/Users/$(printenv USER)/Downloads
 
-#choose the profil:
+
+# choose the profil:
 
 echo ""
 echo -e "${MAGENTA} 1. Choose the AWS profile you want to check :${NC}\n"
 echo -e "${OKGREEN} AWS profiles configured in your machine are: ${NC}\n"
 
-#display your profiles list:
+# display your profiles list:
 aws configure list-profiles > profil_list.txt
 prof_list='profil_list.txt'
 nbline=$(cat profil_list.txt | wc -l)
-
+# reading each line
 n=1
 while read line; do
-#reading each line
 echo "$n. $line"
 n=$((n+1))
 done < $prof_list
+
 echo "ALL.To select all profiles: type 'all'"
 echo ""
 
 read -p '==> Enter the profile number of your choice (1,2,...,ALL): ' select_prof
 
-#check if selected profil exists or selection is "all" :
+# check if selected profil exists or selection is "all" :
 
  if [[ "$select_prof" -ge 1 && "$select_prof" -le "$nbline" ]] || [[ "$select_prof" = "all" || "$select_prof" = "ALL" ]] ; then
 
@@ -61,8 +62,7 @@ echo " "
 
 read -p '==>   Enter the MONTH for which you want the billing (1,2,3...11,12): ' month
 
-
-#check if selected profil exists or selection is "all" :
+# check if selected profil exists or selection is "all" :
 
  if [[ "$month" -ge 1 && "$month" -le 12 ]] ; then
 
@@ -116,10 +116,11 @@ monthd=$(printf %02d $month)
 endyear=$year
 fi
 
-
 # all profiles case
 
 if [[ "$select_prof" = "all" || "$select_prof" = "ALL" ]] ; then
+
+
 echo " 
 ===============================================================
         Billing for all AWS accounts on $MON_STR $year
@@ -127,27 +128,52 @@ echo "
 > $path_output/AWS_billing_all_${MON_STR}_${year}.txt
 n=1
 while read line; do
-# reading each line of profiles_list
+  # reading each line of profiles_list
 profile=$(head -$n $prof_list | tail -1)
 PERIOD='Start='$year'-'$monthd'-01,End='$endyear'-'$nxtmonth'-01'
+
+bloc_profile=$(grep -i -A 3 "profile "$(head -$((n+1)) $prof_list | tail -1)"" ~/.aws/config)
+
+printf "\n$n. ${blue}$profile : ${normal}\n "
+
 billing=$(aws --profile $profile ce get-cost-and-usage --time-period $PERIOD --granularity MONTHLY --metrics "BlendedCost" --output text |awk 'FNR == 3 {print $2}')
 
 echo "$n. $profile for $MON_STR $year = $(printf "$%.2f\n" "$billing")" >> $path_output/AWS_billing_all_${MON_STR}_${year}.txt
 
-printf "\n$n. ${green}$profile ${normal}for ${green}$MON_STR $year${normal} = %s\n " "${blue}$(printf "$%.2f" "$billing") ${normal}"
+ # check profile using MFA
+if  echo "$bloc_profile" | grep -q "mfa_serial"  ; then
+
+printf "\n Bill for ${green}$profile ${normal}in ${green}$MON_STR $year${normal} = %s\n " "${blue}$(printf "$%.2f" "$billing") ${normal}"
+
+printf "\n ${red}>> Next profile ($(head -$((n+1)) $prof_list | tail -1)) uses MFA so please wait 30s for a new MFA code on your Authenticator Device...${normal}
+     
+     "
+#source ./progress-bar.sh
+#progress-bar 30
+
+else
+printf "\n Bill for ${green}$profile ${normal}in ${green}$MON_STR $year${normal} = %s\n " "${blue}$(printf "$%.2f" "$billing") ${normal}"
+fi
+
 n=$((n+1)) 
 done < $prof_list
 
+printf "\n${MAGENTA}*** INFO ***    GET-COST for All your accounts ended successfully! 
+*** INFO ***    You can find your bills summarize in ${red}$path_output/AWS_billing_all_${MON_STR}_${year}.txt\n ${normal}
+
+"
+rm -r ~/.aws/cli/cache
 else
 
-#single profile case
-
+ #single profile case
 
 profile=$(head -"$select_prof" $prof_list | tail -1)
 
 PERIOD='Start='$year'-'$monthd'-01,End='$endyear'-'$nxtmonth'-01'
 billing=$(aws --profile $profile ce get-cost-and-usage --time-period $PERIOD --granularity MONTHLY --metrics "BlendedCost" --output text |awk 'FNR == 3 {print $2}')
+
 printf "\nBilling of ${blue}$profile ${normal}for ${green}$MON_STR $year${normal} = %s\n\n " "${blue}$(printf "$%.2f\n" "$billing") ${normal}"
 
 fi
+
 exit 0
