@@ -4,7 +4,7 @@ Get cost of a specific month for your AWS Accounts using AWS CLI.
 
 This script written in bash was created and validated on MacOs HighSierra 10.13.6 using bash-3.2.
 
-Requirement : you need your AWS credentials/profils already set on your local machine. (~./aws/config and ~/.aws/credentials)
+Requirement : you need your AWS credentials/profiles already set on your local machine. (~./aws/config and ~/.aws/credentials)
 
 Installation :
 
@@ -15,10 +15,11 @@ Use:
 
 1/ run the script : ./ce_monthly.sh
 
-2/ Select the profile for which you wanna check the bill.
-
+2/ Select the profile for which you wanna check the monthly cost.
 (Note : you can choose to get 'all' your profiles bills in one time.)
 
-3/ Select the month for which you want your bill(s).
+3/ Select the year for which you want your bill(s).
 
-4/ In case you selected 'all' a text file will be exported in your "Downloads folder".
+4/ Select the month for which you want your bill(s).
+
+5/ In case you selected 'all' a text file will be exported in your local "Downloads" folder.
