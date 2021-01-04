@@ -43,9 +43,9 @@ if [[ "$select_prof" -ge 1 && "$select_prof" -le "$nbline" ]] || [[ "$select_pro
 
 echo " "
 echo -e "${MAGENTA} 2. Choose the YEAR for which you want to check the billing :${NC}\n"
-read -p '==>   Enter the YEAR for which you want the billing (2019,2020...): ' year
+read -p '==>   Enter the YEAR for which you want the billing (2020,2021...): ' year
 
-if [[ -n "$year" ]] && [[ "$year" = 2019 || "$year" = 2020 ]] ; then
+if [[ -n "$year" ]] && [[ "$year" = 2020 || "$year" = 2021 ]] ; then
 
 # choose the month:
 echo " "
